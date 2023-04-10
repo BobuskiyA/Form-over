@@ -1,0 +1,158 @@
+<div class="form-over" style="
+    position: relative;
+    margin-bottom: -117.6px;
+    background-color: #f9f9f9;
+    z-index: 9999999 !important;
+    /* height: 230px; */"> 
+    <div class="payment-method-title field choice" bis_skin_checked="1"> 
+        <input type="radio" name="payment[method]" checked class="radio" data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()" id="checkoutcom_card_payment" value="checkoutcom_card_payment" required> 
+        <label data-bind="attr: {'for': getCode()}" class="label" for="checkoutcom_card_payment"> 
+            <span data-bind="i18n: getTitle()"> Credit/Debit Cards </span>
+            <span class="cards">
+                <img src="images/amex.svg" alt="">
+                <img src="images/discover.svg" alt="">
+                <img src="images/visa.svg" alt="">
+                <img src="images/mastercard.svg" alt="">
+            </span>
+        </label> 
+    </div>
+    <div id="error-message" style="
+    border-left:red 7px solid;
+    background-color: #edf2f7;
+    padding: 15px 19px;
+    display: none;
+    margin-bottom: 7px;">
+        The card number is invalid. Check the card details or use a different card.
+    </div>
+    <div class="payment-method-content" bis_skin_checked="1" >
+        <div class="form-line">
+            <div class="field-container error" style="position: relative;">
+                <span class="ico"></span>
+                <input name="card" id="cardnumber" type="text" inputmode="numeric" placeholder="Card number">
+            </div>
+            <div class="right-filds" style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0px !important
+           ">
+                <div class="field-container error field-additional">
+                    <input name="date" id="expirationdate" type="text" inputmode="numeric" placeholder="MM/YY" style="max-width: 50px !important;">
+                
+                </div>
+                <div class="field-container error field-additional">
+                    <input name="code" id="securitycode" type="text" inputmode="numeric" placeholder="CVV">
+                </div>
+                <div class="field-container error zipcode field-additional" style="display: none; margin: 0px !important;">
+                    <input name="zip" id="zipcode" type="text" inputmode="numeric" placeholder="ZIP" style="max-width: 50px !important;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>   
+$(function() {                                                              
+    $(function()
+    {
+      $('.radio').change(function()
+      {
+        if ($(this).is(':checked')) {
+         $('.payment-method').removeClass('_active');
+           $(this).parent().parent().parent().addClass('_active');
+        };
+
+        if ($("#input2").hasClass("_active")) {
+          $(".btn-google").show();
+          $(".btn-card").hide();
+          $(".form-over").hide();
+        }
+        if ($("#input1").hasClass("_active")) {
+          $(".btn-google").hide();
+          $(".btn-card").show();
+          $(".form-over").show();
+        }
+      });
+    });
+
+const cardnumberN = document.getElementById('cardnumber');
+const expirationdateN = document.getElementById('expirationdate');
+const securitycodeN = document.getElementById('securitycode');
+const zipcode = document.getElementById('zipcode');
+const errormessage = document.getElementById('error-message');
+const button = document.getElementsByClassName("btn-card")[0];
+const formover = document.getElementsByClassName("form-over")[0];
+const paymentcontent = document.getElementsByClassName("payment-method-content")[0];
+console.log("here it is");
+
+function validateCardNumber(cardNumber) {
+  // Remove any non-numeric characters
+  cardNumber = cardNumber.replace(/\D/g, '');
+
+  // Check that the number is between 13 and 19 digits long
+  if (cardNumber.length < 13 || cardNumber.length > 19) {
+    return false;
+  }
+
+  // Use Luhn algorithm to validate the card number
+  var sum = 0;
+  for (var i = 0; i < cardNumber.length; i++) {
+    var digit = parseInt(cardNumber.charAt(i));
+    if (i % 2 == 0) {
+      digit *= 2;
+      if (digit > 9) {
+        digit -= 9;
+      }
+    }
+    sum += digit;
+  }
+  return sum % 10 == 0;
+}
+
+function validateZip(zipcode){
+    return zipcode.length == 5 ;
+}
+
+ $('#cardnumber').keyup(function()
+{
+
+    if (!validateCardNumber(cardnumberN.value) && cardnumberN.value.length > 18){
+        cardnumberN.style.setProperty("color", "red", "important");
+        console.log("red");
+    }else {
+        cardnumberN.style.removeProperty("color");
+    }
+
+    if (cardnumberN.value.length > 18) zipcode.parentElement.style.display = "block";
+
+    if( $(this).val().length === 0 ||  $(this).val().length < 17) {
+        $(this).parent().addClass('error');
+        $(this).parent().removeClass('blur');
+
+    } else {
+        $(this).parent().removeClass('error');
+        $(this).parent().removeClass('blur');
+    }
+
+});
+
+
+button.addEventListener("click",function(){
+    console.log("hello");
+    if(!validateCardNumber(cardnumber.value) && cardnumber.value.length > 18){
+        errormessage.style.display = 'block';
+        formover.style.height = "230px";
+        paymentcontent.style.marginBottom= "100px";
+    }
+    if(!validateZip(zipcode.value)) {
+        zipcode.style.setProperty("color", "red", "important");
+        formover.style.height = "200px";
+        paymentcontent.style.marginBottom= "100px";
+    }
+    else zipcode.style.removeProperty('color');
+}); 
+});
+
+</script> 
